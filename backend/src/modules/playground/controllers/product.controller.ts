@@ -91,17 +91,14 @@ export class ProductController {
       },
     },
   })
-  async createOrUpdateProductsUploadFile(
+  async createOrUpdateSuppliersUploadFile(
     @UploadedFile() file: Express.Multer.File,
   ) {
     if (!file) throw new BadRequestException('No file uploaded');
-    if (!this.xmlService.checkExtension(file))
-      throw new BadRequestException(
-        'Invalid file format. Only xlsx or xls files are allowed.',
-      );
+    this.xmlService.checkExtension(file);
+
     const parsedFile = await this.xmlService.parseXmlFile(file);
-    if (parsedFile == null) throw new BadRequestException('Error parsing file');
-    await this.productService.fileProcessing(parsedFile);
+    this.productService.fileProcessing(parsedFile);
   }
 
   @Post('create-or-update-products')

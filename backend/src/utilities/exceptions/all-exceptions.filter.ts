@@ -4,11 +4,19 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
+  Inject,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { Services } from 'src/constants/services';
+import { LogServiceInterface } from 'src/modules/loggers/interfaces/log.service.interface';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
+  constructor(
+    @Inject(Services.LogServiceInterface)
+    private readonly logService: LogServiceInterface,
+  ) {}
+
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -22,6 +30,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
       exception instanceof HttpException
         ? exception.getResponse()
         : { message: (exception as any).message || 'Internal server error' };
+
+    this.logService.error({
+      status,
+      message,
+      path: request.url,
+      timestamp: new Date().toISOString(),
+    });
 
     response.status(status).json({
       statusCode: status,

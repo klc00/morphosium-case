@@ -1,6 +1,8 @@
 export interface LogServiceInterface {
-  logGeneral(message: string, context?: string): void;
-  logUpload(message: string, context?: string): void;
-  logError(message: string, context?: string): void;
-  getUploadLogs(limit: number, offset: number): string[];
+  log(message: any, ...optionalParams: any[]): void;
+  error(message: any, ...optionalParams: any[]): void;
+  warn(message: any, ...optionalParams: any[]): void;
+  debug?(message: any, ...optionalParams: any[]): void;
+  verbose?(message: any, ...optionalParams: any[]): void;
+  getLogs(limit: number, offset: number, fileName: string): string[];
 }

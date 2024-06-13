@@ -1,27 +1,23 @@
-FROM node:18-alpine AS builder
+FROM node:alpine as build
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-COPY package*.json ./
-COPY yarn.lock ./
-
+COPY package.json yarn.lock ./
 RUN yarn install
 
 COPY . .
-
 RUN yarn build
 
-FROM node:18-alpine
+FROM node:alpine
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-COPY package*.json ./
-COPY yarn.lock ./
+COPY --from=build /app/package.json /app/yarn.lock ./
+COPY --from=build /app/.next ./.next
+COPY --from=build /app/next.config.mjs ./next.config.mjs
+COPY --from=build /app/public ./public
+
 RUN yarn install --production
-
-COPY --from=builder /usr/src/app/.next ./.next
-COPY --from=builder /usr/src/app/public ./public
-COPY --from=builder /usr/src/app/next.config.js ./next.config.js
 
 CMD ["yarn", "start"]
 

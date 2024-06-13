@@ -44,7 +44,6 @@ export class SupplierService implements SupplierServiceInterface {
   async createOrBulkProcessing(
     data: CreateOrUpdateSuppliersRequest[],
   ): Promise<void> {
-    console.log(data);
     const productsCreate = data.filter((item) => item.id === undefined);
     const productsUpdate = data.filter((item) => item.id !== undefined);
 
@@ -66,7 +65,6 @@ export class SupplierService implements SupplierServiceInterface {
       await transaction.commit();
     } catch (error) {
       await transaction.rollback();
-      console.log(error);
       throw new Error('Transaction rolled back due to error.');
     }
   }

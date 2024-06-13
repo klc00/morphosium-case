@@ -53,7 +53,6 @@ export class ProductService implements ProductServiceInterface {
   async createOrBulkProcessing(
     data: CreateOrUpdateProductsRequest[],
   ): Promise<void> {
-    console.log(data);
     const productsCreate = data.filter((item) => item.id === undefined);
     const productsUpdate = data.filter((item) => item.id !== undefined);
 
@@ -74,7 +73,6 @@ export class ProductService implements ProductServiceInterface {
       await transaction.commit();
     } catch (error) {
       await transaction.rollback();
-      console.log(error);
       throw new Error('Transaction rolled back due to error.');
     }
   }

@@ -8,7 +8,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger } from 'nestjs-pino';
-import { AllExceptionsFilter } from './utilities/exceptions/all-exceptions.filter';
 import { SecurityStrategies } from './constants/security-strategies';
 
 async function bootstrap() {
@@ -19,7 +18,6 @@ async function bootstrap() {
   app.enableCors();
   app.setGlobalPrefix('api');
   app.useLogger(app.get(Logger));
-  app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalPipes(
     new ValidationPipe({
       exceptionFactory: (validationErrors: ValidationError[] = []) => {

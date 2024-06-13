@@ -24,6 +24,14 @@ export const pinoLoggerOptions: Params = {
           },
           level: 'info',
         },
+        {
+          target: 'pino-pretty',
+          options: {
+            colorize: true,
+            translateTime: 'SYS:standard',
+          },
+          level: 'debug',
+        },
       ],
     },
   },

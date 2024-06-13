@@ -1,19 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { extname } from 'path';
 import * as ExcelJS from 'exceljs';
 import { XMLServiceInterface } from '../interfaces/xml.service.interface';
 
 @Injectable()
 export class XMLService implements XMLServiceInterface {
-  public checkExtension(file: Express.Multer.File): boolean {
+  public checkExtension(file: Express.Multer.File): void {
     const allowedExtensions = ['.xlsx', '.xls'];
     const fileExt = extname(file.originalname).toLowerCase();
 
-    if (!allowedExtensions.includes(fileExt)) return false;
-    return true;
+    if (!allowedExtensions.includes(fileExt))
+      throw new BadRequestException(
+        'Invalid file format. Only xlsx or xls files are allowed.',
+      );
   }
 
-  public async parseXmlFile(file: Express.Multer.File): Promise<any[] | null> {
+  public async parseXmlFile(file: Express.Multer.File): Promise<any[]> {
     try {
       const workbook = new ExcelJS.Workbook();
       await workbook.xlsx.load(file.buffer);
@@ -40,7 +42,7 @@ export class XMLService implements XMLServiceInterface {
 
       return suppliers;
     } catch (err) {
-      return null;
+      throw new BadRequestException('Error parsing file');
     }
   }
 }

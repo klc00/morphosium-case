@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PinoLogger, InjectPinoLogger } from 'nestjs-pino';
-import { LogFiles } from 'src/constants/log-files';
 import * as fs from 'fs';
 import * as path from 'path';
 import { LogServiceInterface } from '../interfaces/log.service.interface';
@@ -11,20 +10,28 @@ export class LogService implements LogServiceInterface {
     @InjectPinoLogger(LogService.name) private readonly logger: PinoLogger,
   ) {}
 
-  logGeneral(message: string, context?: string): void {
-    this.logger.info(message, { context });
+  log(message: any, ...optionalParams: any[]) {
+    this.logger.info(message, ...optionalParams);
   }
 
-  logUpload(message: string, context?: string): void {
-    this.logger.info(message, { context, target: LogFiles.Uploads });
+  error(message: any, ...optionalParams: any[]) {
+    this.logger.error(message, ...optionalParams);
   }
 
-  logError(message: string, context?: string): void {
-    this.logger.error(message, { context });
+  warn(message: any, ...optionalParams: any[]) {
+    this.logger.warn(message, ...optionalParams);
   }
 
-  getUploadLogs(limit: number, offset: number): string[] {
-    const logFilePath = path.join(__dirname, '..', 'logs', 'uploads.log');
+  debug?(message: any, ...optionalParams: any[]) {
+    this.logger.debug(message, ...optionalParams);
+  }
+
+  verbose?(message: any, ...optionalParams: any[]) {
+    this.logger.trace(message, ...optionalParams);
+  }
+
+  getLogs(limit: number, offset: number, fileName: string): string[] {
+    const logFilePath = path.join(__dirname, '..', 'logs', `${fileName}.log`);
 
     if (!fs.existsSync(logFilePath)) {
       return [];

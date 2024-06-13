@@ -1,0 +1,71 @@
+version: "3.8"
+
+services:
+#  mssql:
+#    image: mcr.microsoft.com/mssql/server:2019-latest
+#    container_name: mssql
+#    ports:
+#      - "1433:1433"
+#    environment:
+#      SA_PASSWORD: "YourStrong@Passw0rd"
+#      ACCEPT_EULA: "Y"
+#    volumes:
+#      - mssql_data:/var/opt/mssql
+
+#  frontend:
+#    build:
+#      context: ./frontend
+#      dockerfile: Dockerfile
+#    container_name: frontend
+#    ports:
+#      - "7070:7070"
+#    environment:
+#      - NODE_ENV=production
+#    volumes:
+#      - ./frontend:/usr/src/app
+#    depends_on:
+#      - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - API_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.Et9HFtf9R3GEMA0IICOfFMVXY7kkTX1wr4qCyhIf58U"
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASS=YourRootPassword
+      - DB_NAME=YourDatabaseName
+      - DB_DIALECT=mysql
+    volumes:
+      - ./backend:/usr/src/app
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: YourRootPassword
+      MYSQL_DATABASE: YourDatabaseName
+      MYSQL_USER: YourUsername
+      MYSQL_PASSWORD: YourPassword
+    ports:
+      - "3306:3306"
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+
+#volumes:
+#  mssql_data:
+#    driver: local
